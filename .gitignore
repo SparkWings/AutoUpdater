@@ -1,0 +1,2 @@
+/target/*.jar
+/target/classes/org/jbltd/update/*.class
