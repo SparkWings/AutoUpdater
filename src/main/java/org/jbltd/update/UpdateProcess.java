@@ -20,10 +20,10 @@ public class UpdateProcess implements Runnable {
 
 	try {
 
-	    // automatically restart the app - OutdatedVersion
+	   
             final ProcessBuilder _processBuilder = new ProcessBuilder("py","UPDATE.py", jarUrl, appName+".jar");
 
-            // continue using the same terminal session
+            
             _processBuilder.inheritIO();
             _processBuilder.start();
             
