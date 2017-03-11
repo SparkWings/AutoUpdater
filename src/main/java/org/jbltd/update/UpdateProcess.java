@@ -2,11 +2,13 @@ package org.jbltd.update;
 
 public class UpdateProcess implements Runnable {
 
+    private UpdateCheck upcateCheck;
     private String appName, jarUrl;
 
     
-    public UpdateProcess(String appName, String jarUrl) {
+    public UpdateProcess(UpdateCheck prior, String appName, String jarUrl) {
 
+	this.upcateCheck = prior;
 	this.appName = appName;
 	this.jarUrl = jarUrl;
 
@@ -24,6 +26,8 @@ public class UpdateProcess implements Runnable {
             // continue using the same terminal session
             _processBuilder.inheritIO();
             _processBuilder.start();
+            
+            upcateCheck.finished = true;
             
             System.exit(0);
 

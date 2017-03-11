@@ -10,6 +10,9 @@ public class UpdateCheck implements Runnable {
     private double returnedVersion;
     private double currentVersion;
 
+    public boolean outOfDate = false;
+    public boolean finished = false;
+    
     /** where this app was initially executed */
     protected static final String WORKING_DIRECTORY = Paths.get(".").toAbsolutePath().normalize().toString();
 
@@ -43,6 +46,14 @@ public class UpdateCheck implements Runnable {
 	return returnedVersion;
     }
 
+    public boolean isOutOfDate() {
+	return outOfDate;
+    }
+    
+    public boolean isFinishedUpdating() {
+	return finished;
+    }
+    
     public void run() {
 	System.out.println("| UPDATE THREAD - Calling Update Manager");
 
@@ -56,10 +67,12 @@ public class UpdateCheck implements Runnable {
 
 		if (getURLReturnedVersion() > getCurrentVersion()) {
 
+		    outOfDate = true;
+		    
 		    System.out.println("| UPDATE THREAD - Update found. " + getApplicationName() + " version  "
 			    + getURLReturnedVersion());
 
-		    Thread t = new Thread(new UpdateProcess(getApplicationName(), getJarURL()));
+		    Thread t = new Thread(new UpdateProcess(this, getApplicationName(), getJarURL()));
 		    t.start();
 
 		} else {
