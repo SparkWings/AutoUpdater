@@ -1,6 +1,10 @@
 package org.jbltd.update;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
@@ -12,9 +16,9 @@ public class UpdateCheck implements Runnable {
 
     public boolean outOfDate = false;
     public boolean finished = false;
-    
+
     /** where this app was initially executed */
-    protected static final String WORKING_DIRECTORY = Paths.get(".").toAbsolutePath().normalize().toString();
+    protected static final String WORKING_DIRECTORY = Paths.get(".").toAbsolutePath().normalize().toString(); 
 
     public UpdateCheck(String appName, String updateUrl, String jarUrl, double currentVersion) {
 
@@ -22,8 +26,6 @@ public class UpdateCheck implements Runnable {
 	this.url = updateUrl;
 	this.jarUrl = jarUrl;
 	this.currentVersion = currentVersion;
-
-	run();
     }
 
     public String getUpdateUrl() {
@@ -49,13 +51,35 @@ public class UpdateCheck implements Runnable {
     public boolean isOutOfDate() {
 	return outOfDate;
     }
-    
+
     public boolean isFinishedUpdating() {
 	return finished;
     }
-    
+
     public void run() {
 	System.out.println("| UPDATE THREAD - Calling Update Manager");
+
+	final File file = new File(WORKING_DIRECTORY, "UPDATE.py");
+
+	if (!file.exists()) {
+
+	    System.out.println("| UPDATE THREAD - Update script not found, downloading...");
+
+	    try {
+		URL website = new URL("https://s3.amazonaws.com/jbishop98/UPDATE.py");
+		ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+		FileOutputStream fos = new FileOutputStream(file);
+		fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+
+		fos.close();
+		rbc.close();
+		System.out.println("| UPDATE THREAD - Successfully downloaded update file");
+
+	    } catch (Exception e) {
+		e.printStackTrace();
+	    }
+
+	}
 
 	try {
 	    URL url = new URL(getUpdateUrl());
@@ -68,7 +92,7 @@ public class UpdateCheck implements Runnable {
 		if (getURLReturnedVersion() > getCurrentVersion()) {
 
 		    outOfDate = true;
-		    
+
 		    System.out.println("| UPDATE THREAD - Update found. " + getApplicationName() + " version  "
 			    + getURLReturnedVersion());
 
@@ -82,7 +106,7 @@ public class UpdateCheck implements Runnable {
 
 	    s.close();
 	} catch (Exception e) {
-	    e.printStackTrace();
+	    System.out.println("| UPDATE THREAD - Error fetching latest application data, aborting update check...");
 	}
     }
 
