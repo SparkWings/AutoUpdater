@@ -66,7 +66,7 @@ public class UpdateCheck implements Runnable {
 	    System.out.println("| UPDATE THREAD - Update script not found, downloading...");
 
 	    try {
-		URL website = new URL("https://s3.amazonaws.com/jbishop98/UPDATE.py");
+		URL website = new URL("https://s3.amazonaws.com/BUCKET_NAME/UPDATE.py");
 		ReadableByteChannel rbc = Channels.newChannel(website.openStream());
 		FileOutputStream fos = new FileOutputStream(file);
 		fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
