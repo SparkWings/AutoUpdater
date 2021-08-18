@@ -4,8 +4,8 @@
 
 <br />
 <br />
-This application uses URL checking (Amazon AWS is recommended for file / version storage) to check for an update to a java application using version mapping.
+This Java wrapper application will check against a specified URL for an updated version of a file.
 
-If an update is detected, the API starts a python script to download and start the new jar file, while also deleting the old jar file.
+If an update is detected, the API starts a python script (not included) to download and start the new jar file, while also deleting the old jar file.
 
 The script then terminates itself, and you are looking at the newest update for your application!
